@@ -39,5 +39,10 @@
     "@types/react": "^19.3.0",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gtorrez-qa/Editor-AI-Pro.git"
+  },
+  "homepage": "https://github.com/gtorrez-qa/Editor-AI-Pro"
 }

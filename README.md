@@ -27,10 +27,13 @@ Describí el video que querés y Claude Code lo arma, lo revisa y lo exporta par
 ## Inicio rápido
 
 ```bash
-cd Editor-AI-Pro-GT
+git clone https://github.com/gtorrez-qa/Editor-AI-Pro.git
+cd Editor-AI-Pro
 claude
 /start
 ```
+
+El repositorio es privado: para clonarlo hay que tener acceso (ser el dueño o un colaborador invitado) y haber iniciado sesión en GitHub en esa computadora (por ejemplo con `gh auth login`).
 
 `/start` instala todo, verifica que funcione y te muestra qué podés pedir. Ejemplos:
 
