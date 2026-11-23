@@ -20,7 +20,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { FORMATS, formatIds, type FormatId } from "../src/theme/formats";
-import { parseArgs, ROOT, toPosix } from "./lib/tools";
+import { getMarkKey, isDemoMarkKey } from "../src/lib/mark-key";
+import { parseArgs, renderEnv, ROOT, toPosix } from "./lib/tools";
 
 const { positional, flags } = parseArgs(process.argv.slice(2));
 
@@ -54,6 +55,11 @@ const main = async () => {
   const codec = (typeof flags.codec === "string" ? flags.codec : "h264") as Codec;
   const extraProps = readProps();
   await mkdir(outDir, { recursive: true });
+  // la API de render no lee .env sola: se pasan las variables (incluida la clave de la marca)
+  const envVariables = renderEnv();
+  if (isDemoMarkKey(getMarkKey(envVariables))) {
+    console.log("⚠ Marca de agua con clave de DEMOSTRACIÓN. Generá la tuya con: npm run generate-key");
+  }
 
   console.log("• Empaquetando el proyecto…");
   const serveUrl = await bundle({ entryPoint: path.join(ROOT, "src", "index.ts") });
@@ -63,11 +69,11 @@ const main = async () => {
     for (const format of requested) {
       const size = FORMATS[format];
       // primero se consulta la composición para saber si maneja el formato por props (como "Clip")
-      const probe = await selectComposition({ serveUrl, id, inputProps: extraProps });
+      const probe = await selectComposition({ serveUrl, id, inputProps: extraProps, envVariables });
       const handlesFormat = "format" in (probe.props as Record<string, unknown>);
       const inputProps = handlesFormat ? { ...extraProps, format } : extraProps;
       const composition = handlesFormat
-        ? await selectComposition({ serveUrl, id, inputProps })
+        ? await selectComposition({ serveUrl, id, inputProps, envVariables })
         : { ...probe, width: size.width, height: size.height };
 
       const file = path.join(outDir, `${id}-${format}.${extensionFor(codec)}`);
@@ -77,6 +83,7 @@ const main = async () => {
         serveUrl,
         composition,
         inputProps,
+        envVariables,
         codec,
         scale,
         outputLocation: file,

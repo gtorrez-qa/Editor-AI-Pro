@@ -10,10 +10,10 @@
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 import path from "node:path";
-import { MARK_KEY } from "../src/blocks/InvisibleMark";
 import { decodeField, GRID, highPassCells, idToHex, ownerId, VERIFY_THRESHOLD, verifyId } from "../src/lib/fingerprint";
+import { getMarkKey, isDemoMarkKey } from "../src/lib/mark-key";
 import { BRAND } from "../src/theme/brand";
-import { parseArgs, ROOT } from "./lib/tools";
+import { parseArgs, renderEnv, ROOT } from "./lib/tools";
 
 const PX = 6; // cada celda de la grilla = 6×6 píxeles al analizar
 const SIZE = GRID * PX;
@@ -69,7 +69,12 @@ const main = async () => {
   if (!frames) throw new Error("No se pudieron leer cuadros del video.");
   for (let c = 0; c < cells.length; c++) cells[c] /= frames;
 
-  const result = decodeField(MARK_KEY, cells);
+  const key = getMarkKey(renderEnv());
+  if (isDemoMarkKey(key)) {
+    console.log("  ⚠ Usando la clave de DEMOSTRACIÓN (no hay REMOTION_MARK_KEY en .env).");
+    console.log("    Para videos exportados con tu clave propia, el .env tiene que tener esa misma clave.");
+  }
+  const result = decodeField(key, cells);
   const expected = ownerId(owner);
   const score = verifyId(result, expected);
   const blindOk = result.checkOk && result.id === expected;

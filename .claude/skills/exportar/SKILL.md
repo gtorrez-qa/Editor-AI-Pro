@@ -53,7 +53,7 @@ Salida: `out/lote/<Id>-<formato>.mp4`.
 
 ## Marca de agua invisible
 
-Cada video exportado lleva una marca invisible con el ID del dueño (configurable en `src/theme/brand.ts`). Para comprobar si un video (incluso descargado de una red social) salió de este editor:
+Cada video exportado lleva una marca invisible con el ID del dueño (configurable en `src/theme/brand.ts`), firmada con la clave secreta de `.env` (`REMOTION_MARK_KEY`). Si no existe, generala con `npm run generate-key`; sin clave propia se usa una de demostración pública y el render lo avisa. Para verificar hace falta la misma clave con la que se exportó. Para comprobar si un video (incluso descargado de una red social) salió de este editor:
 
 ```
 npm run verify-mark -- ruta/al/video.mp4 [--owner "Nombre"]

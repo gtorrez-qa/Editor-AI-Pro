@@ -33,7 +33,7 @@ claude
 /start
 ```
 
-El repositorio es privado: para clonarlo hay que tener acceso (ser el dueño o un colaborador invitado) y haber iniciado sesión en GitHub en esa computadora (por ejemplo con `gh auth login`).
+`/start` también genera tu clave secreta de la marca de agua (ver más abajo).
 
 `/start` instala todo, verifica que funcione y te muestra qué podés pedir. Ejemplos:
 
@@ -57,6 +57,7 @@ El repositorio es privado: para clonarlo hay que tener acceso (ser el dueño o u
 | Quitar el fondo de una foto | `npm run remove-bg -- fotos/producto.jpg` |
 | Generar música de prueba | `npm run demo-music` |
 | Verificar la marca de agua invisible | `npm run verify-mark -- video.mp4` |
+| Generar tu clave secreta de la marca | `npm run generate-key` |
 
 La primera vez que preparás un video se descargan Whisper y el modelo de idioma (`small`, ~470 MB). Para probar rápido usá `--model tiny`.
 
@@ -80,6 +81,23 @@ La primera vez que preparás un video se descargan Whisper y el modelo de idioma
 | `Estilos-Titulos` / `Estilos-Subtitulos` | 16:9 / 9:16 | Los 10 estilos de títulos y los 8 de subtítulos |
 
 Todas se pueden exportar en cualquier formato con el render en lote.
+
+## Marca de agua invisible y tu clave secreta
+
+Cada video que exportás lleva una marca invisible con tu identificador de dueño. Para que nadie pueda quitarla ni falsificarla, se firma con una **clave secreta propia** que cada persona tiene que generar:
+
+```bash
+npm run generate-key
+```
+
+- La clave se guarda en el archivo `.env`, que **nunca se sube a git**.
+- **Guardá una copia en un lugar seguro** (por ejemplo, un gestor de contraseñas). Si la perdés, no vas a poder verificar los videos que exportaste con ella.
+- **No la compartas.** Quien la conozca podría intentar quitar la marca de tus videos.
+- Sin clave propia, el editor usa una clave de demostración pública y lo avisa al renderizar: sirve para probar, no para proteger tus videos.
+- Para verificar un video: `npm run verify-mark -- video.mp4` (con la misma clave en `.env`).
+- `npm run generate-key -- --force` reemplaza la clave; los videos exportados con la anterior ya no se podrán verificar con la nueva.
+
+Para que el nombre del dueño sea el tuyo, cambiá `owner` en `src/theme/brand.ts`.
 
 ## Licencia
 

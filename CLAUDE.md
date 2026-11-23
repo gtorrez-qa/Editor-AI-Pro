@@ -35,6 +35,7 @@ Cargá la skill que corresponda antes de empezar cada tarea.
 | Quitar fondo de una imagen | `npm run remove-bg -- ruta/foto.jpg` |
 | Música de prueba propia | `npm run demo-music` |
 | Verificar la marca de agua invisible | `npm run verify-mark -- out/video.mp4` |
+| Generar la clave secreta de la marca | `npm run generate-key` |
 
 ## Composiciones
 
@@ -84,4 +85,4 @@ public/         media/ (videos y audios), music/, cutouts/, data/ (JSON generado
 - Antes de un render largo: `npm run typecheck` y capturas con `remotion still` de los momentos clave.
 - Los videos y audios de la persona se procesan localmente; no los subas a servicios externos.
 - No uses logos, imágenes ni música de terceros sin licencia.
-- La marca (nombre, usuario) está en `src/theme/brand.ts`. Todos los videos llevan una marca de agua invisible con el ID del dueño (`invisibleMark` en ese archivo); no la quites salvo que la persona lo pida.
+- La marca (nombre, usuario) está en `src/theme/brand.ts`. Todos los videos llevan una marca de agua invisible con el ID del dueño (`invisibleMark` en ese archivo); no la quites salvo que la persona lo pida. La clave secreta vive en `.env` (`REMOTION_MARK_KEY`, creada con `npm run generate-key`): nunca la muestres, la copies a otro archivo ni la subas a git.

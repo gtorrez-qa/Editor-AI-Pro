@@ -1,13 +1,20 @@
 import React, { useMemo } from "react";
 import { AbsoluteFill, Img } from "remotion";
 import { embedField, GRID, ownerId } from "../lib/fingerprint";
+import { getMarkKey, isDemoMarkKey } from "../lib/mark-key";
 import { BRAND } from "../theme/brand";
 
 /**
- * Clave de la huella. Para máxima seguridad, cambiala por un valor privado propio y no la
- * publiques: quien conozca la clave podría intentar quitar la marca.
+ * Clave secreta de la huella. Se lee de REMOTION_MARK_KEY en el archivo .env
+ * (generala con `npm run generate-key`). Sin ella se usa una clave de demostración pública.
  */
-export const MARK_KEY = "editor-ai-pro:v1";
+export const MARK_KEY = getMarkKey(typeof process !== "undefined" ? process.env : {});
+
+if (isDemoMarkKey(MARK_KEY) && typeof console !== "undefined") {
+  console.warn(
+    "[Editor AI Pro] Marca de agua con clave de DEMOSTRACIÓN (pública). Generá tu clave con: npm run generate-key",
+  );
+}
 
 /** Opacidad máxima del velo (0.012 ≈ 3 niveles de 255): imperceptible y legible tras recomprimir. */
 export const MARK_STRENGTH = 0.012;

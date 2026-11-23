@@ -3,4 +3,5 @@ out/
 .cache/
 *.log
 .env
+.env.local
 public/music/demo.wav

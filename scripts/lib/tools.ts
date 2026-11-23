@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 export const ROOT = path.resolve(import.meta.dirname, "..", "..");
@@ -43,3 +44,26 @@ export const parseArgs = (argv: string[]) => {
 };
 
 export const toPosix = (p: string) => p.split(path.sep).join("/");
+
+/** Lee .env y .env.local de la raíz del proyecto (formato CLAVE=valor). */
+export const readEnvFile = (): Record<string, string> => {
+  const out: Record<string, string> = {};
+  for (const name of [".env", ".env.local"]) {
+    const file = path.join(ROOT, name);
+    if (!existsSync(file)) continue;
+    for (const line of readFileSync(file, "utf8").split(/\r?\n/)) {
+      const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$/);
+      if (!m) continue;
+      out[m[1]] = m[2].replace(/^(['"])(.*)\1$/, "$2");
+    }
+  }
+  return out;
+};
+
+/** Variables de entorno para el render: las de .env más las REMOTION_* del sistema. */
+export const renderEnv = (): Record<string, string> => {
+  const fromSystem = Object.fromEntries(
+    Object.entries(process.env).filter(([k, v]) => k.startsWith("REMOTION_") && v !== undefined),
+  ) as Record<string, string>;
+  return { ...readEnvFile(), ...fromSystem };
+};

@@ -14,7 +14,8 @@
     "remove-bg": "tsx scripts/remove-bg.ts",
     "demo-music": "tsx scripts/make-demo-music.ts",
     "render-batch": "tsx scripts/render-batch.ts",
-    "verify-mark": "tsx scripts/verify-mark.ts"
+    "verify-mark": "tsx scripts/verify-mark.ts",
+    "generate-key": "tsx scripts/generate-key.ts"
   },
   "engines": {
     "node": ">=20"

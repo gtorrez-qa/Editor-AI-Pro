@@ -21,7 +21,11 @@ Si npm muestra avisos de `allow-scripts` o vulnerabilidades, no son errores: seg
 
 Corré `npm run typecheck`. Si falla, leé el error y corregilo antes de seguir.
 
-## 4. Primera vista previa
+## 4. Clave de la marca de agua
+
+Corré `npm run generate-key`. Crea una clave secreta propia en `.env` (si ya existe, no la toca). Decile a la persona, en una línea, que guarde una copia de esa clave en un lugar seguro: sin ella no podrá verificar después que sus videos salieron de su editor. Nunca muestres la clave en el chat.
+
+## 5. Primera vista previa
 
 Generá una captura para confirmar que el render funciona (la primera vez descarga un navegador de ~130 MB):
 
@@ -31,11 +35,11 @@ npx remotion still Short out/bienvenida.png --frame=60
 
 Mostrale la imagen a la persona si tu entorno lo permite.
 
-## 5. Música de prueba (opcional)
+## 6. Música de prueba (opcional)
 
 Si no existe `public/music/demo.wav`, corré `npm run demo-music`, así puede probar la música de fondo sin buscar un tema.
 
-## 6. Presentar lo que puede hacer
+## 7. Presentar lo que puede hacer
 
 Terminá con un mensaje corto y concreto, en este estilo:
 
