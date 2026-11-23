@@ -11,17 +11,23 @@
     "still": "remotion still",
     "typecheck": "tsc --noEmit",
     "prepare-video": "tsx scripts/prepare-video.ts",
-    "remove-bg": "tsx scripts/remove-bg.ts"
+    "remove-bg": "tsx scripts/remove-bg.ts",
+    "demo-music": "tsx scripts/make-demo-music.ts",
+    "render-batch": "tsx scripts/render-batch.ts",
+    "verify-mark": "tsx scripts/verify-mark.ts"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
     "@imgly/background-removal-node": "^1.4.5",
+    "@remotion/bundler": "4.0.545",
     "@remotion/captions": "4.0.545",
     "@remotion/cli": "4.0.545",
     "@remotion/google-fonts": "4.0.545",
     "@remotion/install-whisper-cpp": "4.0.545",
+    "@remotion/media-utils": "4.0.545",
+    "@remotion/renderer": "4.0.545",
     "@remotion/transitions": "4.0.545",
     "react": "19.2.0",
     "react-dom": "19.2.0",

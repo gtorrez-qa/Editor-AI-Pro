@@ -47,8 +47,17 @@ const probe = async (file: string) => {
   const r = await runTool("ffprobe", ["-v", "error", "-print_format", "json", "-show_streams", "-show_format", file]);
   if (r.code !== 0) throw new Error(`ffprobe no pudo leer el archivo:\n${r.stderr}`);
   const info = JSON.parse(r.stdout);
-  const v = info.streams.find((s: { codec_type: string }) => s.codec_type === "video");
-  if (!v) throw new Error("El archivo no tiene pista de video.");
+  // las portadas de mp3 aparecen como "video" con disposition.attached_pic: se ignoran
+  const v = info.streams.find(
+    (s: { codec_type: string; disposition?: { attached_pic?: number } }) =>
+      s.codec_type === "video" && !s.disposition?.attached_pic,
+  );
+  const hasAudio = info.streams.some((s: { codec_type: string }) => s.codec_type === "audio");
+  if (!v) {
+    if (!hasAudio) throw new Error("El archivo no tiene ni video ni audio.");
+    // solo audio (podcast, nota de voz): width/height 0 lo identifica así
+    return { durationSec: Number(info.format.duration), width: 0, height: 0, fps: 30, hasAudio };
+  }
   const [n, d] = String(v.avg_frame_rate || v.r_frame_rate || "30/1").split("/").map(Number);
   const rotation = Math.abs(Number(v.tags?.rotate ?? v.side_data_list?.[0]?.rotation ?? 0));
   const swap = rotation === 90 || rotation === 270;
@@ -57,7 +66,7 @@ const probe = async (file: string) => {
     width: swap ? v.height : v.width,
     height: swap ? v.width : v.height,
     fps: d ? n / d : 30,
-    hasAudio: info.streams.some((s: { codec_type: string }) => s.codec_type === "audio"),
+    hasAudio,
   };
 };
 
@@ -186,9 +195,11 @@ const main = async () => {
   console.log(`  Archivo:     public/data/${base}.json`);
   console.log(`  Duración:    ${meta.durationSec.toFixed(1)} s → ${kept.toFixed(1)} s sin silencios`);
   console.log(`  Subtítulos:  ${captions ? `${captions.length} palabras` : "no"}`);
-  console.log(`\n  Abrí el Studio (npm run studio), elegí "Clip" y poné data = "${base}.json"`);
+  const comp = meta.width > 0 ? "Clip" : "Podcast";
+  console.log(`
+  Abrí el Studio (npm run studio), elegí "${comp}" y poné data = "${base}.json"`);
   console.log(
-    `  O renderizá directo: npx remotion render Clip out/${base}.mp4 --props='{"data":"${base}.json"}'`,
+    `  O renderizá directo: npx remotion render ${comp} out/${base}.mp4 --props='{"data":"${base}.json"}'`,
   );
 };
 

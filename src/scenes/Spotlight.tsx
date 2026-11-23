@@ -4,6 +4,7 @@ import { z } from "zod";
 import { Backdrop } from "../blocks/Backdrop";
 import { Headline } from "../blocks/Headline";
 import { ActionChip, Signature } from "../blocks/Overlays";
+import { musicFields, Soundtrack } from "../blocks/Soundtrack";
 import { bounce, drift, ease } from "../lib/motion";
 import { resolveAsset } from "../lib/prepared";
 import { BODY_FONT, DISPLAY_FONT } from "../theme/fonts";
@@ -22,6 +23,7 @@ export const spotlightSchema = z.object({
   palette: z.enum(paletteIds),
   backdrop: z.enum(["aurora", "grid", "solid"]),
   handle: z.string(),
+  ...musicFields,
 });
 
 export type SpotlightProps = z.infer<typeof spotlightSchema>;
@@ -181,6 +183,7 @@ export const Spotlight: React.FC<SpotlightProps> = (p) => {
         </div>
       </AbsoluteFill>
       <Signature handle={p.handle} palette={palette} />
+      <Soundtrack src={p.music} volume={p.musicVolume} />
     </AbsoluteFill>
   );
 };

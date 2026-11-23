@@ -54,6 +54,51 @@ export const PALETTES = {
     accent: "#e2462f",
     accent2: "#2f6fe2",
   },
+  /** Cálido y suave: gastronomía, viajes, estilo de vida */
+  atardecer: {
+    base: "#1f0f1a",
+    surface: "#3a1830",
+    ink: "#fff3ec",
+    inkSoft: "#e3bfc0",
+    accent: "#ff8a5b",
+    accent2: "#ff4f8b",
+  },
+  /** Fresco y limpio, fondo claro: salud, bienestar, educación */
+  menta: {
+    base: "#eefaf5",
+    surface: "#ffffff",
+    ink: "#0f2a22",
+    inkSoft: "#4f6f64",
+    accent: "#0b8466",
+    accent2: "#2c7be5",
+  },
+  /** Negro y dorado: lujo, joyería, eventos */
+  oro: {
+    base: "#0b0a08",
+    surface: "#1c1914",
+    ink: "#f8f1e1",
+    inkSoft: "#bcae90",
+    accent: "#d9b45b",
+    accent2: "#f3dc9b",
+  },
+  /** Azules fríos y blancos: tecnología, finanzas, corporativo */
+  hielo: {
+    base: "#0a1324",
+    surface: "#132342",
+    ink: "#f2f7ff",
+    inkSoft: "#9fb3d1",
+    accent: "#6cb6ff",
+    accent2: "#b5f0ff",
+  },
+  /** Violetas intensos: gaming, música, nocturno */
+  uva: {
+    base: "#12061f",
+    surface: "#24103d",
+    ink: "#f7f0ff",
+    inkSoft: "#bba6d9",
+    accent: "#b15cff",
+    accent2: "#ffcc4d",
+  },
 } satisfies Record<string, Palette>;
 
 export type PaletteId = keyof typeof PALETTES;

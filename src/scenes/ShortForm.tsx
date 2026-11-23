@@ -1,13 +1,13 @@
-import { linearTiming, TransitionSeries } from "@remotion/transitions";
-import { fade } from "@remotion/transitions/fade";
-import { slide } from "@remotion/transitions/slide";
-import { wipe } from "@remotion/transitions/wipe";
+import { TransitionSeries } from "@remotion/transitions";
 import React from "react";
 import { AbsoluteFill, type CalculateMetadataFunction, useCurrentFrame, useVideoConfig } from "remotion";
 import { z } from "zod";
 import { Backdrop } from "../blocks/Backdrop";
 import { Headline, headlineMotions } from "../blocks/Headline";
 import { ActionChip, ProgressLine, Signature } from "../blocks/Overlays";
+import { Particles, particleModes } from "../blocks/Particles";
+import { musicFields, Soundtrack } from "../blocks/Soundtrack";
+import { makeTransition, rotatingTransition, transitionNames } from "../blocks/Transitions";
 import { ease } from "../lib/motion";
 import { DISPLAY_FONT, BODY_FONT } from "../theme/fonts";
 import { FPS, unit } from "../theme/formats";
@@ -28,6 +28,11 @@ export const shortFormSchema = z.object({
   secondsPerPoint: z.number().min(1).max(12),
   ctaSeconds: z.number().min(1).max(10),
   showProgress: z.boolean(),
+  /** Transiciones entre pantallas; se usan en orden y se repiten */
+  transitions: z.array(z.enum(transitionNames)).min(1),
+  /** Partículas de ambiente */
+  ambient: z.enum(["ninguno", ...particleModes]),
+  ...musicFields,
 });
 
 export type ShortFormProps = z.infer<typeof shortFormSchema>;
@@ -124,20 +129,9 @@ const CtaScreen: React.FC<{ p: ShortFormProps; palette: Palette }> = ({ p, palet
 export const ShortForm: React.FC<ShortFormProps> = (p) => {
   const palette = PALETTES[p.palette];
   const segs = segments(p);
-  const timing = linearTiming({ durationInFrames: TRANSITION });
-  const transitionAt = (i: number) => {
-    const key = `t-${i}`;
-    switch (i % 4) {
-      case 0:
-        return <TransitionSeries.Transition key={key} timing={timing} presentation={slide({ direction: "from-bottom" })} />;
-      case 1:
-        return <TransitionSeries.Transition key={key} timing={timing} presentation={fade()} />;
-      case 2:
-        return <TransitionSeries.Transition key={key} timing={timing} presentation={wipe({ direction: "from-left" })} />;
-      default:
-        return <TransitionSeries.Transition key={key} timing={timing} presentation={slide({ direction: "from-right" })} />;
-    }
-  };
+  const { width, height } = useVideoConfig();
+  const transitionAt = (i: number) =>
+    makeTransition({ key: `t-${i}`, name: rotatingTransition(p.transitions, i), width, height, durationInFrames: TRANSITION });
 
   const screens: React.ReactNode[] = [
     <HookScreen key="hook" p={p} palette={palette} />,
@@ -150,6 +144,7 @@ export const ShortForm: React.FC<ShortFormProps> = (p) => {
   return (
     <AbsoluteFill style={{ backgroundColor: palette.base }}>
       <Backdrop palette={palette} variant={p.backdrop} />
+      {p.ambient !== "ninguno" && <Particles palette={palette} mode={p.ambient} count={45} />}
       <TransitionSeries>
         {screens.flatMap((screen, i) => {
           const items = [
@@ -165,6 +160,7 @@ export const ShortForm: React.FC<ShortFormProps> = (p) => {
       </TransitionSeries>
       {p.showProgress && <ProgressLine palette={palette} />}
       <Signature handle={p.handle} palette={palette} />
+      <Soundtrack src={p.music} volume={p.musicVolume} />
     </AbsoluteFill>
   );
 };

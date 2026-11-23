@@ -10,10 +10,12 @@ import {
 import { z } from "zod";
 import { Captions, captionLooks, captionPositions } from "../blocks/Captions";
 import { Headline } from "../blocks/Headline";
+import { LowerThird } from "../blocks/LowerThird";
 import { ProgressLine, Signature } from "../blocks/Overlays";
+import { musicFields, Soundtrack, type SpeechWindow } from "../blocks/Soundtrack";
 import { fadeOutBefore } from "../lib/motion";
 import { loadPrepared, resolveAsset, type PreparedVideo } from "../lib/prepared";
-import { captionsForCut, totalSeconds, type Span } from "../lib/timeline";
+import { captionsForCut, speechWindowsForCut, totalSeconds, type Span } from "../lib/timeline";
 import { BODY_FONT } from "../theme/fonts";
 import { FORMATS, FPS, unit } from "../theme/formats";
 import { PALETTES, paletteIds } from "../theme/palettes";
@@ -33,9 +35,17 @@ export const captionedClipSchema = z.object({
   clipEnd: z.number().min(0),
   /** Título que aparece los primeros segundos (vacío = sin título) */
   title: z.string(),
+  /** Nombre y cargo de quien habla, en un cartel inferior (vacío = sin cartel) */
+  speakerName: z.string(),
+  speakerRole: z.string(),
   palette: z.enum(paletteIds),
   handle: z.string(),
   showProgress: z.boolean(),
+  ...musicFields,
+  /** Cuánto baja la música mientras se habla (0.2 = al 20 %) */
+  musicDuck: z.number().min(0).max(1),
+  /** Volumen del audio original del video, de 0 a 1 */
+  videoVolume: z.number().min(0).max(2),
   /** Lo completa calculateMetadata; no editar a mano */
   prepared: z.any().optional(),
 });
@@ -108,6 +118,8 @@ export const CaptionedClip: React.FC<CaptionedClipProps> = (p) => {
   const spans = spansFor(p, v);
   const src = resolveAsset(v.video);
   const captions = v.captions && p.showCaptions ? captionsForCut(v.captions, spans) : [];
+  // la música baja donde hay voz (tramos hablados detectados, o palabras si no hay detección)
+  const speech: SpeechWindow[] = speechWindowsForCut(v.keep, v.captions, spans);
 
   let cursor = 0;
   const pieces = spans.map((s, i) => {
@@ -119,6 +131,7 @@ export const CaptionedClip: React.FC<CaptionedClipProps> = (p) => {
         <OffthreadVideo
           src={src}
           trimBefore={Math.round(s.start * FPS)}
+          volume={p.videoVolume}
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
       </Sequence>
@@ -144,6 +157,9 @@ export const CaptionedClip: React.FC<CaptionedClipProps> = (p) => {
           <Headline text={p.title} motion="pop" size={u * 7} color={palette.ink} accent={palette.accent} />
         </AbsoluteFill>
       )}
+      {p.speakerName && (
+        <LowerThird name={p.speakerName} role={p.speakerRole} palette={palette} from={p.title ? titleEnd : 15} holdFrames={4 * FPS} />
+      )}
       {captions.length > 0 && (
         <Captions
           captions={captions}
@@ -155,6 +171,7 @@ export const CaptionedClip: React.FC<CaptionedClipProps> = (p) => {
       )}
       {p.showProgress && <ProgressLine palette={palette} />}
       <Signature handle={p.handle} palette={palette} />
+      <Soundtrack src={p.music} volume={p.musicVolume} duckTo={p.musicDuck} speech={speech} />
     </AbsoluteFill>
   );
 };
