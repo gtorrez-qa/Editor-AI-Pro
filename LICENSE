@@ -1,0 +1,18 @@
+Copyright (c) 2026 Guillermo Torrez. Todos los derechos reservados.
+
+Este software y su código fuente son propiedad de Guillermo Torrez. Queda
+prohibido copiarlo, modificarlo, distribuirlo, sublicenciarlo o venderlo, total
+o parcialmente, sin autorización previa y por escrito del titular.
+
+Componentes de terceros
+-----------------------
+Este proyecto usa bibliotecas de terceros que mantienen sus propias licencias y
+no forman parte de esta titularidad, entre ellas:
+
+- Remotion (https://remotion.dev): gratuito para personas y empresas de hasta
+  3 empleados; organizaciones más grandes necesitan una licencia de empresa.
+  Ver https://remotion.dev/license
+- React (MIT), Zod (MIT), whisper.cpp (MIT)
+- @imgly/background-removal-node (AGPL-3.0). Si distribuís o vendés este
+  software incluyendo esa biblioteca, revisá las obligaciones de la AGPL o
+  reemplazala por una alternativa con licencia compatible.

@@ -1,0 +1,37 @@
+{
+  "name": "editor-ai-pro",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Editor AI Pro: describí el video que querés y Claude lo arma y lo renderiza con Remotion.",
+  "author": "Guillermo Torrez",
+  "license": "UNLICENSED",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render",
+    "still": "remotion still",
+    "typecheck": "tsc --noEmit",
+    "prepare-video": "tsx scripts/prepare-video.ts",
+    "remove-bg": "tsx scripts/remove-bg.ts"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@imgly/background-removal-node": "^1.4.5",
+    "@remotion/captions": "4.0.545",
+    "@remotion/cli": "4.0.545",
+    "@remotion/google-fonts": "4.0.545",
+    "@remotion/install-whisper-cpp": "4.0.545",
+    "@remotion/transitions": "4.0.545",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "remotion": "4.0.545",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.3.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}
